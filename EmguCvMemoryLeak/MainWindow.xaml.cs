@@ -47,6 +47,7 @@ namespace EmguCvMemoryLeak
                 SpinWait.SpinUntil(() => flag);
 
                 videoCapture.Stop();
+                videoCapture.ImageGrabbed -= VideoCapture_ImageGrabbed;
                 videoCapture.Dispose();
             }
         }
@@ -54,10 +55,11 @@ namespace EmguCvMemoryLeak
         private void VideoCapture_ImageGrabbed(object sender, EventArgs e)
         {
             Mat mat = new Mat();
-            if (!videoCapture.Read(mat))
+            if (!videoCapture.Retrieve(mat) || mat.IsEmpty)
             {
                 flag = true;
             }
+
             mat.Dispose();
         }
     }
